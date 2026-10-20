@@ -1,0 +1,78 @@
+{
+  "version": "4.2.3",
+  "core": "gambatte",
+  "assets": [
+    {
+      "path": "loader.js",
+      "url": "https://cdn.emulatorjs.org/4.2.3/data/loader.js",
+      "bytes": 7594,
+      "sha256": "69e0903bf1e2f62ced78895e7e511fa26e11316f7eb734925c35e919ba1287b2"
+    },
+    {
+      "path": "emulator.min.js",
+      "url": "https://cdn.emulatorjs.org/4.2.3/data/emulator.min.js",
+      "bytes": 426343,
+      "sha256": "6aec3fd7bb2721255801b0a6af02e47e78b05e28a1822b1f213aacbd348abaee"
+    },
+    {
+      "path": "emulator.min.css",
+      "url": "https://cdn.emulatorjs.org/4.2.3/data/emulator.min.css",
+      "bytes": 25630,
+      "sha256": "16406c60b2dc3b04ae9b115e308613e6f567a0cc7068e21d9d0c1e5030fb395e"
+    },
+    {
+      "path": "version.json",
+      "url": "https://cdn.emulatorjs.org/4.2.3/data/version.json",
+      "bytes": 126,
+      "sha256": "d8991427000a96fb97daefdb62178071e9bbff911760706148e584ae8d69f9e7"
+    },
+    {
+      "path": "compression/extract7z.js",
+      "url": "https://cdn.emulatorjs.org/4.2.3/data/compression/extract7z.js",
+      "bytes": 280155,
+      "sha256": "4ac9933b995a516cb6b3ca4027db860278372a20c21c405d93ceb1998498853a"
+    },
+    {
+      "path": "compression/extractzip.js",
+      "url": "https://cdn.emulatorjs.org/4.2.3/data/compression/extractzip.js",
+      "bytes": 196199,
+      "sha256": "3cc825428724213acd43d30552a78008e0869b2326de17dee240dbff9ee2f629"
+    },
+    {
+      "path": "compression/libunrar.js",
+      "url": "https://cdn.emulatorjs.org/4.2.3/data/compression/libunrar.js",
+      "bytes": 66684,
+      "sha256": "bc35b98ec95020ec047f4762de3e66629741eee3826022195498d2a1e0fc102c"
+    },
+    {
+      "path": "compression/libunrar.wasm",
+      "url": "https://cdn.emulatorjs.org/4.2.3/data/compression/libunrar.wasm",
+      "bytes": 173799,
+      "sha256": "e4ea9bd0b13a9767916b424469e30205f47f267ecd9125ed56fb9ff0b9bc1b58"
+    },
+    {
+      "path": "cores/gambatte-legacy-wasm.data",
+      "url": "https://cdn.emulatorjs.org/4.2.3/data/cores/gambatte-legacy-wasm.data",
+      "bytes": 967022,
+      "sha256": "940a7381d51223c0be0c0f98d1a988d42cc98d03c27b392cbd29cb9f357b5f62"
+    },
+    {
+      "path": "cores/gambatte-wasm.data",
+      "url": "https://cdn.emulatorjs.org/4.2.3/data/cores/gambatte-wasm.data",
+      "bytes": 967156,
+      "sha256": "ad67c7bf57f8f8b62606048e6ea498afac5b5abc76ad8de5f9dfc2a6719374bb"
+    },
+    {
+      "path": "cores/reports/gambatte.json",
+      "url": "https://cdn.emulatorjs.org/4.2.3/data/cores/reports/gambatte.json",
+      "bytes": 122,
+      "sha256": "a240a47bd6b2a38a6c46ee63c80bdcd24befbd50474453df4898d49282bd5f57"
+    },
+    {
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/EmulatorJS/EmulatorJS/v4.2.3/LICENSE",
+      "bytes": 35111,
+      "sha256": "a617fab6d251b3302b1cb2c1c94f52d1c584f6fcb2fc218ec1a475bc08053a61"
+    }
+  ]
+}

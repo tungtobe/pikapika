@@ -1,0 +1,24 @@
+{
+  "name": "pokered-player",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "node scripts/check-assets.mjs && vite build",
+    "preview": "vite preview",
+    "setup:emulator": "node scripts/setup-emulator.mjs",
+    "sync:roms": "node scripts/sync-roms.mjs",
+    "test": "playwright test",
+    "package:deploy": "npm run build && node scripts/package-deploy.mjs",
+    "test:pwa": "playwright test --config playwright.pwa.config.js"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1",
+    "vite": "8.3.4",
+    "vite-plugin-pwa": "^2.0.0"
+  }
+}

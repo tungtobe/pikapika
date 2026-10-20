@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f5f3ea" />
+    <meta name="description" content="Chơi Pokémon Red và Blue trên điện thoại hoặc máy tính, hỗ trợ offline và lưu tiến trình riêng trên thiết bị." />
+    <title>Pokémon Pocket</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Pokémon Pocket" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="Pokémon Pocket"><span class="pokeball" aria-hidden="true"></span><span>POKÉMON <b>POCKET</b></span></a>
+        <div class="header-controls"><label class="language-label" for="language">ROM</label><select id="language" aria-label="Ngôn ngữ ROM"><option value="en">English</option><option id="language-vi" value="vi">Tiếng Việt</option></select><span class="local-badge"><i></i> POCKET PLAY</span></div>
+      </header>
+      <main>
+        <section class="pwa-panel" aria-label="Ứng dụng và kết nối">
+          <div><strong id="offline-status" role="status">Đang chuẩn bị chế độ offline…</strong><p id="install-hint">iPhone: mở bằng Safari → Chia sẻ → Thêm vào Màn hình chính. Giữ bật “Mở dưới dạng ứng dụng web” nếu có.</p></div>
+          <button id="install" class="outline-button" hidden>Cài ứng dụng</button>
+          <button id="update-app" class="outline-button" hidden>Lưu &amp; cập nhật</button>
+        </section>
+        <section class="intro"><p class="eyebrow">KANTO, NGAY TRÊN TRÌNH DUYỆT</p><h1>Một chuyến đi.<br /><span>151 điều để khám phá.</span></h1><p class="intro-copy">Chọn phiên bản, cầm tay cầm lên và trở lại nơi mọi thứ bắt đầu.</p></section>
+        <div class="workspace">
+          <aside class="library" aria-label="Thư viện game">
+            <p class="section-label">01 / CHỌN PHIÊN BẢN</p>
+            <button class="game-card selected" data-game="red" aria-pressed="true"><span class="cart red-cart" aria-hidden="true"><span class="cart-label"><span>POKÉMON</span><b>RED</b><small>VERSION</small></span></span><span class="card-meta"><strong>Pokémon Red</strong><small>Kanto · 1998</small></span><span class="selected-dot" aria-hidden="true"></span></button>
+            <button class="game-card" data-game="blue" aria-pressed="false"><span class="cart blue-cart" aria-hidden="true"><span class="cart-label"><span>POKÉMON</span><b>BLUE</b><small>VERSION</small></span></span><span class="card-meta"><strong>Pokémon Blue</strong><small>Kanto · 1998</small></span><span class="selected-dot" aria-hidden="true"></span></button>
+            <div class="library-note"><span>✦</span><p>Hai cuộc phiêu lưu.<br />Hai bộ save riêng biệt.</p></div>
+          </aside>
+          <section class="play-area" aria-label="Máy chơi game">
+            <div class="screen-header"><div><span class="screen-dot"></span><strong id="game-title">Pokémon Red</strong><span class="version-label" id="version-label">GAME BOY</span></div><span id="runtime-status">SẴN SÀNG</span></div>
+            <div class="screen" id="screen">
+              <div class="welcome" id="welcome"><span class="pixel-ball" aria-hidden="true">◓</span><p class="eyebrow">YOUR NEXT ADVENTURE</p><h2>Kanto đang chờ bạn.</h2><p>Tiến trình gần nhất sẽ được tiếp tục tự động.</p><button class="play-button" id="play">▶ <span>Bắt đầu chơi</span></button><small>Bấm vào màn hình để điều khiển bằng bàn phím.</small></div>
+              <iframe id="emulator" title="Màn hình Pokémon" allow="autoplay; fullscreen; gamepad" hidden></iframe>
+              <button id="resume-overlay" class="resume-overlay" hidden>▶ Tiếp tục chơi<small>Chạm để tiếp tục và bật âm thanh</small></button>
+            </div>
+            <div class="touch-controls" id="touch-controls" aria-label="Điều khiển cảm ứng">
+              <div class="dpad" role="group" aria-label="Di chuyển">
+                <button data-input="4" class="pad-up" aria-label="Lên" data-runtime disabled>▲</button>
+                <button data-input="6" class="pad-left" aria-label="Trái" data-runtime disabled>◀</button>
+                <span class="pad-center" aria-hidden="true"></span>
+                <button data-input="7" class="pad-right" aria-label="Phải" data-runtime disabled>▶</button>
+                <button data-input="5" class="pad-down" aria-label="Xuống" data-runtime disabled>▼</button>
+              </div>
+              <div class="system-buttons"><button data-input="2" data-runtime disabled>SELECT</button><button data-input="3" data-runtime disabled>START</button></div>
+              <div class="action-buttons"><button data-input="0" class="button-b" data-runtime disabled>B</button><button data-input="8" class="button-a" data-runtime disabled>A</button></div>
+            </div>
+            <div class="toolbar"><button id="pause" data-runtime disabled>Ⅱ Tạm dừng</button><div class="toolbar-right"><button id="sound" data-runtime disabled aria-label="Bật âm thanh">♪ Âm thanh</button><button id="quick-save" data-runtime disabled title="F6">↓ Lưu nhanh <kbd>F6</kbd></button><button id="quick-load" data-runtime disabled title="F8">↺ Tải lại <kbd>F8</kbd></button><button id="fullscreen" data-runtime disabled aria-label="Toàn màn hình">⛶</button></div></div>
+            <p class="status" id="status" role="status" aria-live="polite">Chọn game và bắt đầu cuộc phiêu lưu.</p>
+          </section>
+          <aside class="utility" aria-label="Điều khiển và lưu tiến trình">
+            <section class="control-panel"><p class="section-label">02 / ĐIỀU KHIỂN</p><h3>Chơi theo cách của bạn.</h3><dl class="key-map"><div><dt>Di chuyển</dt><dd><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd></dd></div><div><dt>A / Xác nhận</dt><dd><kbd>Z</kbd></dd></div><div><dt>B / Quay lại</dt><dd><kbd>X</kbd></dd></div><div><dt>Start</dt><dd><kbd>Enter</kbd></dd></div><div><dt>Select</dt><dd><kbd>Shift</kbd></dd></div></dl><div class="gamepad-note"><span aria-hidden="true">♧</span><div><strong id="gamepad-status">Gamepad sẵn sàng kết nối</strong><p>D-pad / cần trái · A = Z · B = X<br />Nhấn một nút để kết nối. Đổi mapping trong biểu tượng tay cầm trên màn hình.</p></div></div></section>
+            <section class="save-panel"><p class="section-label">03 / TIẾN TRÌNH CỦA BẠN</p><div class="save-heading"><h3>Hẹn gặp lại, Trainer.</h3><span class="save-icon" aria-hidden="true">↗</span></div><p>Tự lưu mỗi 5 giây và khi chuyển ứng dụng. Mở lại game để tiếp tục đúng chỗ đã dừng.</p><p id="storage-status" class="storage-status">Đang kiểm tra bộ nhớ thiết bị…</p><button id="persist-storage" class="text-button">Giữ dữ liệu trên máy</button><dl class="save-times"><div><dt>Tự lưu</dt><dd id="auto-time">Chưa có</dd></div><div><dt>Lưu nhanh</dt><dd id="quick-time">Chưa có</dd></div></dl><button id="export" class="outline-button" data-runtime disabled>↓ Xuất file save</button><button id="import" class="text-button" data-runtime disabled>↑ Nhập file save</button><input id="import-file" type="file" accept=".json,application/json" hidden /><small>Save riêng trên từng máy, từng trình duyệt và địa chỉ web. Không đồng bộ đám mây. Xuất file để sao lưu hoặc chuyển máy; cài ứng dụng trước khi bắt đầu chơi trên iPhone.</small></section>
+          </aside>
+        </div>
+        <footer><span><span class="footer-dot"></span> EMULATORJS 4.2.3 · GAMBATTE</span><span>Chuyến đi của bạn. Tiến trình trên máy bạn.</span></footer>
+      </main>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

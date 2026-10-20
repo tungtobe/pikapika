@@ -1,0 +1,9 @@
+node_modules/
+dist/
+public/roms/*.gbc
+public/emulatorjs/
+test-results/
+playwright-report/
+.DS_Store
+
+artifacts/

@@ -1,0 +1,10 @@
+{
+  "red-vi": {
+    "file": "pokered_vi.gbc",
+    "sha1": "3df77b1e955a53788f96249bc7309a23b020ca7f"
+  },
+  "blue-vi": {
+    "file": "pokeblue_vi.gbc",
+    "sha1": "ba5d79ce5513f587f3fad780959dd2abe5065a3c"
+  }
+}
