@@ -110,11 +110,13 @@ async function continueGame(frame) {
 for (const id of ['red', 'red-vi']) {
   test(`${id}: migrate a legacy checkpoint to two ROM revisions without deleting old saves`, async ({ page }) => {
     const revision = await revisions(page, id), firstHash = revision(1);
+    // The untagged Vietnamese checkpoint came from the previous public ROM.
+    const legacySha1 = id === 'red-vi' ? '3df77b1e955a53788f96249bc7309a23b020ca7f' : games[id].sha1;
     await page.goto(`/?game=${id}`);
     // No metadata/battery existed in the original app. A damaged newer auto
     // must not hide an older, valid quick checkpoint.
-    await seed(page, games[id].sha1, { corrupt: true, validQuick: true });
-    const original = await saves(page, games[id].sha1);
+    await seed(page, legacySha1, { corrupt: true, validQuick: true });
+    const original = await saves(page, legacySha1);
     let frame = await boot(page);
     expect((await coreROM(frame)).hash).toBe(firstHash);
     expect((await coreROM(frame)).path).toContain(firstHash);
@@ -122,9 +124,9 @@ for (const id of ['red', 'red-vi']) {
     expect(Buffer.from((await live(frame, 'sram')).slice(0x2000))).toEqual(Buffer.from(battery.slice(0x2000)));
     const first = await saves(page, firstHash);
     expect(first.gameId).toBe(id);
-    expect(first.migration.fromSha1).toBe(games[id].sha1);
+    expect(first.migration.fromSha1).toBe(legacySha1);
     expect(first.auto.stateSha256).not.toBe(fixture.stateSha256); // no old CPU state restored
-    expect(await saves(page, games[id].sha1)).toEqual(original);
+    expect(await saves(page, legacySha1)).toEqual(original);
     await continueGame(frame);
     await page.locator('#pause').click();
     await expect(page.locator('#status')).toContainText('Đã tạm dừng');
@@ -141,7 +143,7 @@ for (const id of ['red', 'red-vi']) {
     await page.reload();
     await boot(page);
     expect((await saves(page, secondHash)).migration.at).toBe(migratedAt);
-    expect(await saves(page, games[id].sha1)).toEqual(original);
+    expect(await saves(page, legacySha1)).toEqual(original);
   });
 }
 
