@@ -25,10 +25,36 @@ export async function writeSlot(game, slot, snapshot) {
     const tx = db.transaction('saves', 'readwrite');
     const store = tx.objectStore('saves');
     const request = store.get(game.sha1);
-    request.onsuccess = () => store.put({ ...request.result, [slot]: snapshot }, game.sha1);
+    request.onsuccess = () => store.put({ ...request.result, gameId: game.id, saveSchema: game.saveSchema, [slot]: snapshot }, game.sha1);
     tx.oncomplete = resolve;
     tx.onerror = () => reject(tx.error);
     tx.onabort = () => reject(tx.error || new Error('Không thể lưu dữ liệu.'));
+  });
+}
+export async function readSaveEntries() {
+  const db = await database();
+  return new Promise((resolve, reject) => {
+    const entries = [];
+    const request = db.transaction('saves').objectStore('saves').openCursor();
+    request.onsuccess = () => {
+      const cursor = request.result;
+      if (!cursor) { resolve(entries); return; }
+      entries.push({ sha1: cursor.key, ...cursor.value });
+      cursor.continue();
+    };
+    request.onerror = () => reject(request.error);
+  });
+}
+// One transaction: an import must never leave only one of the two slots updated.
+// The record of the source ROM is deliberately left untouched.
+export async function replaceSaves(game, snapshots, migration) {
+  const db = await database();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('saves', 'readwrite');
+    tx.objectStore('saves').put({ gameId: game.id, saveSchema: game.saveSchema, ...snapshots, migration }, game.sha1);
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
+    tx.onabort = () => reject(tx.error || new Error('Không thể chuyển save.'));
   });
 }
 export function toBase64(bytes) {

@@ -13,6 +13,7 @@ let game = getGame(requestedGame || `${getGame(previousGame).base}-vi`);
 let ready = false;
 let paused = false;
 let busy = false;
+let migrationWarning = '';
 let bootTimeout;
 let releaseTouch = () => {};
 function showPause(value) {
@@ -36,6 +37,9 @@ async function updateTimes() {
     $(`${slot}-time`).textContent = saves[slot]
       ? new Date(saves[slot].updatedAt).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' }) : 'Chưa có';
   }
+  $('migration-note').textContent = migrationWarning || (saves.migration
+    ? 'Đã chuyển SAVE từ ROM cũ. Sau khi khởi động lại game, chọn TIẾP TỤC / CONTINUE để chơi từ mốc SAVE trong game.'
+    : 'Trước khi cập nhật ROM, hãy dùng START → SAVE trong game. Web tự chuyển mốc SAVE sang bản ROM tương thích mới; lưu nhanh vẫn thuộc ROM cũ.');
 }
 function setControls() {
   document.querySelectorAll('[data-runtime]').forEach(button => button.disabled = !ready || busy);
@@ -44,6 +48,7 @@ function setControls() {
 }
 function selectGame(id) {
   game = getGame(id);
+  migrationWarning = '';
   try { localStorage.setItem('pokered-player:last-game', game.id); } catch { /* IndexedDB saves report their own errors. */ }
   document.documentElement.dataset.game = game.base;
   $('language').value = game.language;
@@ -155,9 +160,11 @@ $('import-file').addEventListener('change', () => {
   if (!file) return;
   action(async () => {
     if (file.size > 20_000_000) throw new Error('File save quá lớn.');
-    await runtime().importBackup(await file.text());
+    const result = await runtime().importBackup(await file.text());
+    migrationWarning = '';
     await updateTimes();
-  }, 'Đã nhập save và tiếp tục cuộc phiêu lưu.');
+    status(result.migrated ? 'Đã chuyển SAVE từ ROM cũ. Chọn TIẾP TỤC / CONTINUE trong game.' : 'Đã nhập save và tiếp tục cuộc phiêu lưu.');
+  });
   $('import-file').value = '';
 });
 window.addEventListener('message', event => {
@@ -170,12 +177,14 @@ window.addEventListener('message', event => {
     status('Chạm Tiếp tục chơi để bật âm thanh và khởi động game.');
   } else if (message.type === 'ready') {
     ready = true;
+    migrationWarning = message.migrationUnavailable ? 'Có save ROM cũ nhưng chưa tìm thấy SAVE trong game hợp lệ. Bản cũ vẫn được giữ; mở lại ROM cũ, dùng START → SAVE rồi xuất file để nhập vào bản mới.' : '';
+    updateTimes().catch(e => status(e.message, true));
     showPause(false);
     if (matchMedia('(pointer: coarse)').matches) document.querySelector('.play-area').scrollIntoView({ block: 'start' });
     clearTimeout(bootTimeout);
     setControls();
     $('runtime-status').textContent = 'ĐANG CHƠI';
-    status(message.resumed ? 'Đã tiếp tục từ tiến trình gần nhất. Tự lưu mỗi 5 giây.' : 'Đang chơi. Tiến trình được tự lưu mỗi 5 giây.');
+    status(message.migrated ? 'Đã chuyển SAVE từ ROM cũ. Chọn TIẾP TỤC / CONTINUE trong game.' : message.resumed ? 'Đã tiếp tục từ tiến trình gần nhất. Tự lưu mỗi 5 giây.' : 'Đang chơi. Tiến trình được tự lưu mỗi 5 giây.');
   } else if (message.type === 'paused') {
     showPause(true);
     status('Đã tạm dừng khi chuyển ứng dụng. Chạm Tiếp tục để chơi.');
