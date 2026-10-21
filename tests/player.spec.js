@@ -13,7 +13,7 @@ test('ROMs boot locally; keyboard and gamepad inputs reach the core', async ({ p
     window.testPad = { id: 'Test Standard Controller', index: 0, connected: true, mapping: 'standard', timestamp: 1, axes: [0,0,0,0], buttons: Array.from({ length: 17 }, () => ({ pressed: false, touched: false, value: 0 })) };
     Object.defineProperty(navigator, 'getGamepads', { value: () => [structuredClone(window.testPad), null, null, null] });
   });
-  await page.goto('/');
+  await page.goto('/?game=red');
   const frame = await boot(page);
   await expect(frame.locator('canvas')).toBeVisible();
   await frame.evaluate(() => {
@@ -40,7 +40,7 @@ test('ROMs boot locally; keyboard and gamepad inputs reach the core', async ({ p
 });
 
 test('quick save, reload, backup round-trip, corruption rejection and per-ROM isolation', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/?game=red');
   let frame = await boot(page);
   await page.locator('#pause').click();
   await expect(page.locator('#status')).toContainText('Đã tạm dừng');

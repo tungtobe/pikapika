@@ -13,7 +13,7 @@ npm run dev
 
 Mở **http://localhost:5173**. Node.js >= 22.12. `setup:emulator` tải runtime đã ghim SHA-256; `sync:roms` kiểm tra checksum rồi đọc ROM từ repo kế bên `../pokered`. Chỉ hai bước chuẩn bị này cần mạng / repo ROM; bản deploy không cần repo kế bên, RGBDS hoặc công cụ build ROM.
 
-ROM Việt được build bằng `make vietnamese` trong repo `pokered`. Đồng bộ lại sau mỗi lần build để cập nhật cả ROM và checksum. Mỗi ROM / ngôn ngữ có save riêng. `?game=red-vi` và `?game=blue-vi` mở bản Việt trực tiếp.
+ROM Việt được build bằng `make vietnamese` trong repo `pokered`. Đồng bộ lại sau mỗi lần build để cập nhật cả ROM và checksum. Trang chủ mặc định mở bản tiếng Việt của Red / Blue vừa chọn. Bạn vẫn có thể chọn English hoặc mở URL ROM tiếng Anh trực tiếp. Mỗi ROM / ngôn ngữ có save riêng. `?game=red-vi` và `?game=blue-vi` mở bản Việt trực tiếp.
 
 ## Deploy Vercel
 
@@ -77,7 +77,7 @@ Bấm màn hình nếu bàn phím chưa có hiệu lực. Kết nối tay cầm 
 
 ## Tiến trình trên từng máy
 
-- IndexedDB giữ **tự lưu** toàn bộ trạng thái mỗi **5 giây**, khi tạm dừng, trước đổi ROM / cập nhật web và khi chuyển ứng dụng. Mở lại sẽ chọn đúng phiên bản / ngôn ngữ vừa chơi; bấm Bắt đầu để tự tiếp tục. Snapshot được ghi trước khi chờ đồng bộ battery save.
+- IndexedDB giữ **tự lưu** toàn bộ trạng thái mỗi **5 giây**, khi tạm dừng, trước đổi ROM / cập nhật web và khi chuyển ứng dụng. Mở lại URL hiện tại sẽ giữ phiên bản / ngôn ngữ; vào trang chủ không có tham số sẽ ưu tiên tiếng Việt của Red / Blue vừa chọn; bấm Bắt đầu để tự tiếp tục. Snapshot được ghi trước khi chờ đồng bộ battery save.
 - **Lưu nhanh** là mốc riêng, không bị tự lưu ghi đè. F8 / Tải lại quay về mốc này.
 - Save trong game (Start → Save) là battery save của Pokémon, đồng bộ cùng mỗi lần lưu của ứng dụng. **Xuất file save** tạo `.save.json` chứa trạng thái, battery save và checksum. **Nhập file save** kiểm tra đầy đủ trước khi thay thế mốc tự lưu + lưu nhanh.
 - Save tách theo **máy / trình duyệt / profile / địa chỉ website / SHA-1 ROM**. Không có đồng bộ đám mây. Không tự chuyển save giữa Red / Blue hoặc Anh / Việt.

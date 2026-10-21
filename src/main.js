@@ -6,7 +6,10 @@ import { setupTouch } from './touch.js';
 const $ = id => document.getElementById(id);
 let previousGame;
 try { previousGame = localStorage.getItem('pokered-player:last-game'); } catch { /* Storage may be restricted. */ }
-let game = getGame(new URLSearchParams(location.search).get('game') || previousGame);
+// Home opens the Vietnamese edition of the last Red/Blue choice. Explicit
+// ROM links and the language selector still allow the English editions.
+const requestedGame = new URLSearchParams(location.search).get('game');
+let game = getGame(requestedGame || `${getGame(previousGame).base}-vi`);
 let ready = false;
 let paused = false;
 let busy = false;

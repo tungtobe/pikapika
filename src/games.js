@@ -7,4 +7,4 @@ for (const [id, rom] of Object.entries(vietnamese)) {
   const base = id.split('-')[0];
   games[id] = { ...games[base], ...rom, id, base, language: 'vi' };
 }
-export const getGame = (id) => games[id] || games.red;
+export const getGame = (id) => games[id] || games['red-vi'] || games.red;
