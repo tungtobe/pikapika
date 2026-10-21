@@ -87,6 +87,24 @@ Bấm màn hình nếu bàn phím chưa có hiệu lực. Kết nối tay cầm 
 
 Bản cập nhật mới chỉ hiện nút **Lưu & cập nhật**. Game được tạm dừng và lưu thành công trước khi service worker mới áp dụng / tải lại trang. Cập nhật ứng dụng không xóa IndexedDB save.
 
+## Xuất / nhập save trên điện thoại
+
+Mở đúng bản game (Red / Blue, Anh / Việt) và bấm **Bắt đầu chơi** trước; các nút xuất / nhập chỉ bật khi game đã sẵn sàng.
+
+- **Xuất trên iPhone:** bấm **Xuất file save**. Tìm file `.save.json` trong **Tệp → Duyệt → Tải về**, ở iCloud Drive hoặc Trên iPhone tùy nơi Safari lưu tải xuống. Nếu máy mở bản xem trước file, dùng **Chia sẻ → Lưu vào Tệp**. Có thể giữ bản sao trong iCloud Drive hoặc gửi qua AirDrop.
+- **Nhập trên iPhone:** trong game, bấm **Nhập file save**, chọn **Chọn tệp / Duyệt** nếu có, tìm file trong Tệp / iCloud Drive rồi chọn. Đợi thông báo **Đã nhập save**. Không cần mở file JSON bên ngoài trước.
+- **Android:** file xuất nằm trong **Tải xuống / Downloads** của Chrome hoặc ứng dụng quản lý tệp. Khi nhập, bấm **Nhập file save** và chọn file từ Tải xuống / Google Drive nếu đã lưu ở đó.
+
+File phải thuộc đúng ROM. Nhập thành công thay thế cả mốc tự lưu và lưu nhanh của bản game đó; nên xuất tiến trình hiện tại trước nếu muốn giữ lại. Chơi tiếp trên cùng thiết bị / địa chỉ web thì dùng tự lưu, không cần xuất và nhập mỗi lần.
+
+Tham khảo: [Apple — tìm file tải xuống trong Tệp](https://support.apple.com/102440), [Chrome Android — tải xuống và tìm file](https://support.google.com/chrome/answer/95759?co=GENIE.Platform%3DAndroid).
+
+## Icon ứng dụng
+
+Icon PWA, icon iPhone và favicon dùng hình Poké Ball. Vector gốc ở `public/icons/pokeball.svg`; chạy `node scripts/generate-icons.mjs` để tạo lại PNG 192, 512 và Apple 180 px (cần Google Chrome). Các PNG đã nằm trong Git nên Vercel không cần chạy bước tạo icon.
+
+Tên file icon mới giúp trình duyệt nhận diện thay đổi sau deploy. iOS có thể giữ icon đã cài trong bộ nhớ đệm; hãy xuất backup trước nếu định gỡ rồi thêm lại ứng dụng màn hình chính, để có thể nhập lại tiến trình nếu cần.
+
 ## Kiểm thử
 
 ```sh

@@ -13,9 +13,9 @@ export default defineConfig({
       start_url: '/', scope: '/', display: 'standalone',
       background_color: '#f5f3ea', theme_color: '#f5f3ea',
       icons: [
-        { src: '/icons/pwa-192.png', sizes: '192x192', type: 'image/png' },
-        { src: '/icons/pwa-512.png', sizes: '512x512', type: 'image/png' },
-        { src: '/icons/maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+        { src: '/icons/pokeball-192.png', sizes: '192x192', type: 'image/png' },
+        { src: '/icons/pokeball-512.png', sizes: '512x512', type: 'image/png' },
+        { src: '/icons/pokeball-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
       ],
     },
     workbox: {
