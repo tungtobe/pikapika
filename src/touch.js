@@ -32,7 +32,13 @@ export function setupTouch({ runtime, playable, onError }) {
     if (next && playable()) { fingers.set(event.pointerId, next); send(next, true); }
   });
   for (const event of ['pointerup', 'pointercancel', 'lostpointercapture']) controls.addEventListener(event, e => release(e.pointerId));
-  controls.addEventListener('contextmenu', e => e.preventDefault());
+  // iOS starts its long-press selection/callout from touchstart, which preventDefault on pointerdown does not cancel.
+  controls.addEventListener('touchstart', e => {
+    if (e.target.closest('[data-input]')) e.preventDefault();
+  }, { passive: false });
+  // Keep the toolbar/status text below the pad from being selected or showing the callout menu.
+  const playArea = controls.closest('.play-area') ?? controls;
+  for (const type of ['contextmenu', 'selectstart']) playArea.addEventListener(type, e => e.preventDefault());
   window.addEventListener('blur', releaseAll);
   document.addEventListener('visibilitychange', () => { if (document.hidden) releaseAll(); });
   return releaseAll;
