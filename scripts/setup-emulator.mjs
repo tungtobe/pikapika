@@ -5,7 +5,8 @@ const manifestUrl = new URL('emulator-assets.json', root);
 const version = '4.2.3';
 const paths = ['loader.js', 'emulator.min.js', 'emulator.min.css', 'version.json',
   'compression/extract7z.js', 'compression/extractzip.js', 'compression/libunrar.js', 'compression/libunrar.wasm',
-  'cores/gambatte-legacy-wasm.data', 'cores/gambatte-wasm.data', 'cores/reports/gambatte.json'];
+  'cores/gambatte-legacy-wasm.data', 'cores/gambatte-wasm.data', 'cores/reports/gambatte.json',
+  'cores/mgba-legacy-wasm.data', 'cores/mgba-wasm.data', 'cores/reports/mgba.json'];
 let previous;
 try { previous = JSON.parse(await readFile(manifestUrl, 'utf8')); } catch (e) { if (e.code !== 'ENOENT') throw e; }
 const assets = [];
@@ -29,4 +30,4 @@ for (const path of [...paths, 'LICENSE']) {
   assets.push({ path, url, bytes: data.length, sha256: digest(data) });
   console.log(`Verified ${path} (${data.length} bytes)`);
 }
-await writeFile(manifestUrl, JSON.stringify({ version, core: 'gambatte', assets }, null, 2) + '\n');
+await writeFile(manifestUrl, JSON.stringify({ version, cores: ['gambatte', 'mgba'], assets }, null, 2) + '\n');

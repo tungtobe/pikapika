@@ -7,6 +7,8 @@
   --line: #dcded3;
 }
 :root[data-game="blue"] { --accent: #477bb7; }
+:root[data-game="anime"] { --accent: #c9862d; }
+:root:not([data-system="gba"]) .gba-only { display: none !important; }
 * { box-sizing: border-box; }
 body { margin: 0; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
 button, a { -webkit-tap-highlight-color: transparent; }
@@ -26,7 +28,7 @@ button:focus-visible, a:focus-visible, select:focus-visible, summary:focus-visib
 
 /* The selector and game are the first rows, on desktop and phones alike. */
 .workspace { display: grid; grid-template-columns: minmax(0, 720px) minmax(240px, 280px); grid-template-areas: "library utility" "player utility" "pwa utility"; justify-content: center; align-items: start; gap: 12px 24px; padding-top: 12px; }
-.library { grid-area: library; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.library { grid-area: library; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .game-card { position: relative; display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 44px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 7px; background: transparent; color: #516459; transition: border-color .15s, background .15s; }
 .game-card strong { font-size: 13px; font-weight: 600; }
 .game-card:hover { background: #eeeee4; }
@@ -34,6 +36,7 @@ button:focus-visible, a:focus-visible, select:focus-visible, summary:focus-visib
 .game-color { width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0; }
 .red-color { background: #ca5148; }
 .blue-color { background: #4d79b6; }
+.anime-color { background: #e0a83a; }
 .selected-dot { width: 6px; height: 6px; border: 1px solid #bcc4b7; border-radius: 50%; }
 .selected .selected-dot { background: #63835a; border-color: #63835a; }
 .play-area { grid-area: player; min-width: 0; background: #e9eae0; border: 1px solid #d9ddcf; border-radius: 10px; padding: 10px 12px 0; }
@@ -44,6 +47,7 @@ button:focus-visible, a:focus-visible, select:focus-visible, summary:focus-visib
 .version-label { color: #7e8979; font-size: 8px; letter-spacing: 1px; border-left: 1px solid #c5ccbc; padding-left: 8px; }
 .screen-header>span { font-size: 8px; color: #6d7d69; letter-spacing: .6px; white-space: nowrap; }
 .screen { aspect-ratio: 10/9; position: relative; border: 7px solid #2a4140; outline: 1px solid #839183; border-radius: 5px; background: #10191b; overflow: hidden; }
+:root[data-system="gba"] .screen { aspect-ratio: 3/2; }
 .screen iframe { width: 100%; height: 100%; border: 0; display: block; }
 .welcome { height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; color: #d5d8c5; text-align: center; padding: 18px; background: radial-gradient(ellipse at 50% 30%, #263f39, #152624 62%); }
 .pixel-ball { font-size: 68px; line-height: 1; color: #c6d1a1; margin-bottom: 18px; }
@@ -108,7 +112,7 @@ footer>span:last-child { font-family: Georgia, serif; font-style: italic; font-s
 .pad-center { grid-area: 2/2; background: #435b50; }
 .pad-right { grid-area: 2/3; }
 .pad-down { grid-area: 3/2; }
-.system-buttons { display: flex; gap: 12px; align-self: end; margin-bottom: 8px; }
+.system-buttons { display: flex; gap: 10px; align-self: end; margin-bottom: 8px; }
 .system-buttons button { font-size: 8px; min-width: 44px; min-height: 44px; border-radius: 20px; padding: 0 6px; background: #738171; box-shadow: 0 3px 0 #556452; }
 .action-buttons { display: flex; gap: 14px; transform: rotate(-20deg); }
 .action-buttons button { width: 52px; height: 52px; border-radius: 50%; font-size: 21px; background: var(--accent); box-shadow: 0 4px 0 #324b40; transform: rotate(20deg); }
@@ -118,6 +122,7 @@ footer>span:last-child { font-family: Georgia, serif; font-style: italic; font-s
 
 .play-area:fullscreen { background: #e9eae0; padding: max(12px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); display: flex; flex-direction: column; justify-content: center; }
 .play-area:fullscreen .screen { max-height: 65dvh; aspect-ratio: 10/9; width: auto; align-self: center; height: 100%; }
+:root[data-system="gba"] .play-area:fullscreen .screen { aspect-ratio: 3/2; }
 .play-area:fullscreen .screen-header, .play-area:fullscreen .status { display: none; }
 .play-area:fullscreen .toolbar { justify-content: center; gap: 20px; }
 body.focus-mode { overflow: hidden; }
@@ -126,6 +131,7 @@ body.focus-mode .topbar, body.focus-mode .pwa-panel, body.focus-mode .library, b
 body.focus-mode .workspace { display: block; padding: 0; }
 body.focus-mode .play-area { position: fixed; inset: 0; z-index: 10; border: 0; border-radius: 0; padding: max(8px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); display: flex; flex-direction: column; align-items: center; justify-content: center; }
 body.focus-mode .screen { width: min(100%, calc((100dvh - 270px)*1.111)); flex-shrink: 0; }
+:root[data-system="gba"] body.focus-mode .screen { width: min(100%, calc((100dvh - 270px)*1.5)); }
 body.focus-mode .screen-header, body.focus-mode .status { display: none; }
 body.focus-mode .touch-controls { width: min(100%, 500px); }
 body.focus-mode .toolbar { gap: 12px; }
@@ -151,7 +157,9 @@ body.focus-mode .toolbar { gap: 12px; }
   #language { font-size: 11px; padding: 7px; }
   .workspace { padding-top: 8px; gap: 8px; }
   .game-card { padding: 8px 9px; gap: 8px; }
-  .game-card strong { font-size: 12px; }
+  .game-card { padding: 8px 6px; gap: 6px; }
+  .game-card strong { font-size: 11px; }
+  .selected-dot { display: none; }
   .play-area { padding: 9px 9px 0; }
   .screen-header { padding: 2px 1px 10px; }
   .version-label { display: none; }
@@ -176,7 +184,8 @@ body.focus-mode .toolbar { gap: 12px; }
 }
 @media (max-height: 500px) and (orientation: landscape) {
   body.focus-mode .play-area { display: grid; grid-template-columns: 1fr minmax(220px, calc((100dvh - 65px)*1.111)) 1fr; grid-template-rows: 1fr auto; gap: 4px 12px; }
-  body.focus-mode .screen { width: 100%; grid-area: 1/2; height: 100%; max-height: calc(100dvh - 70px); }
+  body.focus-mode .screen, :root[data-system="gba"] body.focus-mode .screen { width: 100%; grid-area: 1/2; height: 100%; max-height: calc(100dvh - 70px); }
+  :root[data-system="gba"] body.focus-mode .play-area { grid-template-columns: 1fr minmax(220px, calc((100dvh - 65px)*1.5)) 1fr; }
   body.focus-mode .touch-controls { display: contents; }
   body.focus-mode .dpad { grid-area: 1/1; justify-self: center; }
   body.focus-mode .action-buttons { grid-area: 1/3; justify-self: center; }

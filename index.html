@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#f5f3ea" />
-    <meta name="description" content="Chơi Pokémon Red và Blue trên điện thoại hoặc máy tính, hỗ trợ offline và lưu tiến trình riêng trên thiết bị." />
+    <meta name="description" content="Chơi Pokémon Red, Blue và Anime Version (Việt hoá) trên điện thoại hoặc máy tính, hỗ trợ offline và lưu tiến trình riêng trên thiết bị." />
     <title>Pokémon Pocket</title>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -24,6 +24,7 @@
           <nav class="library" aria-label="Chọn game">
             <button class="game-card selected" data-game="red" aria-pressed="true"><span class="game-color red-color" aria-hidden="true"></span><strong>Pokémon Red</strong><span class="selected-dot" aria-hidden="true"></span></button>
             <button class="game-card" data-game="blue" aria-pressed="false"><span class="game-color blue-color" aria-hidden="true"></span><strong>Pokémon Blue</strong><span class="selected-dot" aria-hidden="true"></span></button>
+            <button class="game-card" data-game="anime" aria-pressed="false"><span class="game-color anime-color" aria-hidden="true"></span><strong>Anime Version</strong><span class="selected-dot" aria-hidden="true"></span></button>
           </nav>
           <section class="play-area" aria-label="Máy chơi game">
             <div class="screen-header"><div><span class="screen-dot"></span><strong id="game-title">Pokémon Red</strong><span class="version-label" id="version-label">GAME BOY</span></div><span id="runtime-status">SẴN SÀNG</span></div>
@@ -40,7 +41,7 @@
                 <button data-input="7" class="pad-right" aria-label="Phải" data-runtime disabled>▶</button>
                 <button data-input="5" class="pad-down" aria-label="Xuống" data-runtime disabled>▼</button>
               </div>
-              <div class="system-buttons"><button data-input="2" data-runtime disabled>SELECT</button><button data-input="3" data-runtime disabled>START</button></div>
+              <div class="system-buttons"><button data-input="10" class="gba-only" aria-label="L" data-runtime disabled>L</button><button data-input="2" data-runtime disabled>SELECT</button><button data-input="3" data-runtime disabled>START</button><button data-input="11" class="gba-only" aria-label="R" data-runtime disabled>R</button></div>
               <div class="action-buttons"><button data-input="0" class="button-b" data-runtime disabled>B</button><button data-input="8" class="button-a" data-runtime disabled>A</button></div>
             </div>
             <div class="toolbar"><div class="toolbar-main"><button id="pause" data-runtime disabled>Ⅱ Tạm dừng</button><button id="sound" data-runtime disabled aria-label="Bật âm thanh">♪ Âm thanh</button><button id="quick-save" data-runtime disabled title="F6">↓ Lưu nhanh <kbd>F6</kbd></button><button id="quick-load" data-runtime disabled title="F8">↺ Tải lại <kbd>F8</kbd></button></div><button id="fullscreen" data-runtime disabled aria-label="Toàn màn hình">⛶</button></div>
@@ -52,11 +53,11 @@
             <button id="update-app" class="outline-button" hidden>Lưu &amp; cập nhật</button>
           </section>
           <aside class="utility" aria-label="Điều khiển và lưu tiến trình">
-            <section class="control-panel"><p class="section-label">ĐIỀU KHIỂN</p><h3>Chơi theo cách của bạn.</h3><dl class="key-map"><div><dt>Di chuyển</dt><dd><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd></dd></div><div><dt>A / Xác nhận</dt><dd><kbd>Z</kbd></dd></div><div><dt>B / Quay lại</dt><dd><kbd>X</kbd></dd></div><div><dt>Start</dt><dd><kbd>Enter</kbd></dd></div><div><dt>Select</dt><dd><kbd>Shift</kbd></dd></div></dl><div class="gamepad-note"><span aria-hidden="true">♧</span><div><strong id="gamepad-status">Gamepad sẵn sàng kết nối</strong><p>D-pad / cần trái · A = Z · B = X<br />Nhấn một nút để kết nối. Đổi mapping trong biểu tượng tay cầm trên màn hình.</p></div></div></section>
-            <section class="save-panel"><p class="section-label">TIẾN TRÌNH CỦA BẠN</p><div class="save-heading"><h3>Hẹn gặp lại, Trainer.</h3><span class="save-icon" aria-hidden="true">↗</span></div><p>Tự lưu mỗi 5 giây và khi chuyển ứng dụng. Mở lại game để tiếp tục đúng chỗ đã dừng.</p><p id="storage-status" class="storage-status">Đang kiểm tra bộ nhớ thiết bị…</p><button id="persist-storage" class="text-button">Giữ dữ liệu trên máy</button><dl class="save-times"><div><dt>Tự lưu</dt><dd id="auto-time">Chưa có</dd></div><div><dt>Lưu nhanh</dt><dd id="quick-time">Chưa có</dd></div></dl><button id="export" class="outline-button" data-runtime disabled>↓ Xuất file save</button><button id="import" class="text-button" data-runtime disabled>↑ Nhập file save</button><input id="import-file" type="file" accept=".json,application/json" hidden /><p id="migration-note" class="storage-status"></p><small>Save riêng trên từng máy, từng trình duyệt và địa chỉ web. Không đồng bộ đám mây. Xuất file để sao lưu hoặc chuyển máy; cài ứng dụng trước khi bắt đầu chơi trên iPhone.</small></section>
+            <section class="control-panel"><p class="section-label">ĐIỀU KHIỂN</p><h3>Chơi theo cách của bạn.</h3><dl class="key-map"><div><dt>Di chuyển</dt><dd><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd></dd></div><div><dt>A / Xác nhận</dt><dd><kbd>Z</kbd></dd></div><div><dt>B / Quay lại</dt><dd><kbd>X</kbd></dd></div><div><dt>Start</dt><dd><kbd>Enter</kbd></dd></div><div><dt>Select</dt><dd><kbd>Shift</kbd></dd></div><div class="gba-only"><dt>L / R</dt><dd><kbd>A</kbd><kbd>S</kbd></dd></div></dl><div class="gamepad-note"><span aria-hidden="true">♧</span><div><strong id="gamepad-status">Gamepad sẵn sàng kết nối</strong><p>D-pad / cần trái · A = Z · B = X<br />Nhấn một nút để kết nối. Đổi mapping trong biểu tượng tay cầm trên màn hình.</p></div></div></section>
+            <section class="save-panel"><p class="section-label">TIẾN TRÌNH CỦA BẠN</p><div class="save-heading"><h3>Hẹn gặp lại, Trainer.</h3><span class="save-icon" aria-hidden="true">↗</span></div><p>Tự lưu mỗi 5 giây và khi chuyển ứng dụng. Mở lại game để tiếp tục đúng chỗ đã dừng.</p><p id="storage-status" class="storage-status">Đang kiểm tra bộ nhớ thiết bị…</p><button id="persist-storage" class="text-button">Giữ dữ liệu trên máy</button><dl class="save-times"><div><dt>Tự lưu</dt><dd id="auto-time">Chưa có</dd></div><div><dt>Lưu nhanh</dt><dd id="quick-time">Chưa có</dd></div></dl><button id="export" class="outline-button" data-runtime disabled>↓ Xuất file save</button><button id="import" class="text-button" data-runtime disabled>↑ Nhập file save</button><button id="export-sav" class="text-button gba-only" data-runtime disabled>↓ Xuất file .sav (mGBA / My Boy! / Delta)</button><input id="import-file" type="file" accept=".json,application/json,.sav,.srm" hidden /><p id="migration-note" class="storage-status"></p><small>Save riêng trên từng máy, từng trình duyệt và địa chỉ web. Không đồng bộ đám mây. Xuất file để sao lưu hoặc chuyển máy; cài ứng dụng trước khi bắt đầu chơi trên iPhone.</small></section>
           </aside>
         </div>
-        <footer><span><span class="footer-dot"></span> EMULATORJS 4.2.3 · GAMBATTE</span><span>Chuyến đi của bạn. Tiến trình trên máy bạn.</span></footer>
+        <footer><span><span class="footer-dot"></span> EMULATORJS 4.2.3 · GAMBATTE · MGBA</span><span>Chuyến đi của bạn. Tiến trình trên máy bạn.</span></footer>
       </main>
     </div>
     <script type="module" src="/src/main.js"></script>

@@ -9,7 +9,7 @@ export default defineConfig({
     registerType: 'prompt',
     manifest: {
       id: '/', name: 'Pokémon Pocket', short_name: 'Pokémon Pocket', lang: 'vi',
-      description: 'Pokémon Red & Blue — chơi offline, lưu tiến trình trên thiết bị của bạn.',
+      description: 'Pokémon Red, Blue & Anime Version — chơi offline, lưu tiến trình trên thiết bị của bạn.',
       start_url: '/', scope: '/', display: 'standalone',
       background_color: '#f5f3ea', theme_color: '#f5f3ea',
       icons: [
@@ -19,7 +19,9 @@ export default defineConfig({
       ],
     },
     workbox: {
-      globPatterns: ['**/*.{js,css,html,png,svg,json,wasm,data,gbc}', '**/LICENSE'],
+      globPatterns: ['**/*.{js,css,html,png,svg,json,wasm,data,gbc,gba}', '**/LICENSE'],
+      // The GBA ROM is 32 MiB; Workbox skips files above 2 MiB by default.
+      maximumFileSizeToCacheInBytes: 40 * 1024 * 1024,
       // Both HTML entries read the game from the query string at runtime.
       ignoreURLParametersMatching: [/^game$/, /^utm_/, /^fbclid$/],
       navigateFallback: null,

@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "setup:emulator": "node scripts/setup-emulator.mjs",
     "sync:roms": "node scripts/sync-roms.mjs",
+    "patch:anime": "node scripts/patch-anime.mjs",
     "test": "playwright test",
     "package:deploy": "npm run build && node scripts/package-deploy.mjs",
     "test:pwa": "playwright test --config playwright.pwa.config.js"

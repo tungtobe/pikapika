@@ -10,7 +10,7 @@ for (const file of ['index.html', 'emulator.html', 'src', 'public', 'scripts', '
   await cp(new URL(file, root), new URL(file, target), { recursive: true });
 }
 await writeFile(new URL('.gitignore', target), 'node_modules/\ndist/\nartifacts/\n.vercel/\n.DS_Store\n');
-await writeFile(new URL('DEPLOY.txt', target), 'Self-contained source bundle: all 4 ROMs and pinned EmulatorJS assets included.\nVercel: cd here, then npx vercel --prod\nGit import: use this entire folder (including public/roms and public/emulatorjs).\nBuild: npm ci && npm run build; output: dist\nNo sibling pokered repository or RGBDS required.\n');
+await writeFile(new URL('DEPLOY.txt', target), 'Self-contained source bundle: all ROMs and pinned EmulatorJS assets included.\nVercel: cd here, then npx vercel --prod\nGit import: use this entire folder (including public/roms and public/emulatorjs).\nBuild: npm ci && npm run build; output: dist\nNo sibling pokered repository or RGBDS required.\n');
 console.log('Vercel source bundle ready: artifacts/vercel/');
 console.log('Static hosting bundle ready: dist/ (deploy the contents, not its parent).');
 

@@ -24,7 +24,54 @@ export function stateField(state, name, expectedSize) {
   throw new Error(`Save state thiếu dữ liệu ${name} hợp lệ.`);
 }
 
-export function validBattery(bytes) {
+// RetroArch wraps mGBA's serializer in the same RASTATE MEM block. Layout from
+// mGBA include/mgba/internal/gba/serialize.h: a 0x61000-byte state (EWRAM at
+// 0x21000), then extdata headers {u32 tag, i32 size, i64 offset}; tag 2 = save data.
+function mgbaState(state) {
+  if (!(state instanceof Uint8Array) || state.length < 16 + 0x61000 ||
+      new TextDecoder().decode(state.subarray(0, 12)) !== 'RASTATE\x01MEM ') {
+    throw new Error('Save state mGBA không hợp lệ.');
+  }
+  const view = new DataView(state.buffer, state.byteOffset, state.byteLength);
+  const size = view.getUint32(12, true);
+  if (16 + size > state.length || size < 0x61000) throw new Error('Định dạng save state không được hỗ trợ.');
+  return { mem: state.subarray(16, 16 + size), view: new DataView(state.buffer, state.byteOffset + 16, size) };
+}
+function mgbaSaveData(state, expectedSize) {
+  const { mem, view } = mgbaState(state);
+  for (let p = 0x61000; p + 16 <= mem.length; p += 16) {
+    const tag = view.getUint32(p, true), size = view.getInt32(p + 4, true), offset = Number(view.getBigUint64(p + 8, true));
+    if (tag === 0) break;
+    if (tag === 2 && size === expectedSize && offset + size <= mem.length) return mem.subarray(offset, offset + size);
+  }
+  throw new Error('Save state thiếu dữ liệu save hợp lệ.');
+}
+export const batterySize = core => core === 'mgba' ? 131072 : 32768;
+// In-game save memory captured inside a full emulator state.
+export function stateBattery(state, core) {
+  return core === 'mgba' ? mgbaSaveData(state, 131072) : stateField(state, 'sram', 32768);
+}
+// RAM that changes little between frames; used to detect a finished state load.
+export function stateMemory(state, core) {
+  return core === 'mgba' ? mgbaState(state).mem.subarray(0x21000, 0x61000) : stateField(state, 'wram', 8192);
+}
+// Gambatte restores an identical WRAM; FireRed keeps ticking timers/RNG in EWRAM,
+// so allow a 1% difference there (an unrelated state differs far more).
+export function sameMemory(expected, actual, core) {
+  if (core !== 'mgba') return expected.every((v, i) => v === actual[i]);
+  let different = 0;
+  for (let i = 0; i < expected.length; i++) if (expected[i] !== actual[i] && ++different > expected.length / 100) return false;
+  return true;
+}
+
+export function validBattery(bytes, core = 'gambatte') {
+  if (core === 'mgba') {
+    // pokefirered include/save.h: 4 KiB sectors ending in signature 0x08012025.
+    if (!(bytes instanceof Uint8Array) || bytes.length !== 131072) return false;
+    const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    for (let sector = 0; sector < 32; sector++) if (view.getUint32(sector * 4096 + 0xff8, true) === 0x08012025) return true;
+    return false;
+  }
   if (!(bytes instanceof Uint8Array) || ![32768, 32816].includes(bytes.length)) return false;
   // pokered/ram/sram.asm: bank 1, sGameData=$a598 .. sMainDataCheckSum=$b523.
   // Exactly the complemented sum checked by the original game's LoadMainData.
@@ -35,16 +82,16 @@ export function validBattery(bytes) {
   return (sum ^ 255) === bytes[0x3523];
 }
 
-export function snapshotBattery(snapshot) {
+export function snapshotBattery(snapshot, core = 'gambatte') {
   // SRAM embedded in the state belongs to that precise checkpoint. An old
   // native filesystem copy could be stale, so prefer the captured state.
   if (snapshot?.state) {
     try {
-      const battery = stateField(snapshot.state, 'sram', 32768);
-      if (validBattery(battery)) return battery.slice();
+      const battery = stateBattery(snapshot.state, core);
+      if (validBattery(battery, core)) return battery.slice();
     } catch { /* Other snapshots may still contain a valid battery. */ }
   }
-  return validBattery(snapshot?.battery) ? snapshot.battery.slice(0, 32768) : null;
+  return validBattery(snapshot?.battery, core) ? snapshot.battery.slice(0, batterySize(core)) : null;
 }
 
 export function compatibleSave(game, source) {
@@ -60,7 +107,7 @@ export async function findMigration(game) {
     if (entry.sha1 === game.sha1 || !compatibleSave(game, entry)) continue;
     previousSave ||= Boolean(entry.auto || entry.quick);
     for (const slot of ['auto', 'quick']) {
-      const snapshot = entry[slot], battery = snapshotBattery(snapshot);
+      const snapshot = entry[slot], battery = snapshotBattery(snapshot, game.core);
       if (battery) candidates.push({ battery, fromSha1: entry.sha1, sourceUpdatedAt: snapshot.updatedAt || 0 });
     }
   }

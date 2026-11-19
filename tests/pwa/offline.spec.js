@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { games } from '../../src/games.js';
 
 async function boot(page) {
   await page.locator('#play').click();
@@ -17,24 +18,25 @@ function workRAM(state) {
   expect(length).toBe(8192);
   return bytes.subarray(header + 3, header + 3 + length);
 }
-const readAuto = page => page.evaluate(async () => {
+// Current red-vi ROM; a hard-coded SHA-1 goes stale whenever the ROM is rebuilt.
+const readAuto = page => page.evaluate(async sha1 => {
   const db = await new Promise((resolve, reject) => {
     const r = indexedDB.open('pokered-player', 1); r.onsuccess = () => resolve(r.result); r.onerror = () => reject(r.error);
   });
   const save = await new Promise((resolve, reject) => {
-    const r = db.transaction('saves').objectStore('saves').get('3df77b1e955a53788f96249bc7309a23b020ca7f');
+    const r = db.transaction('saves').objectStore('saves').get(sha1);
     r.onsuccess = () => resolve(r.result); r.onerror = () => reject(r.error);
   });
   db.close();
   return save?.auto?.updatedAt || 0;
-});
+}, games['red-vi'].sha1);
 
-test('all four ROMs and the engine boot offline; device saves survive reopening', async ({ page, context, browser }) => {
+test('all five ROMs and both cores boot offline; device saves survive reopening', async ({ page, context, browser }) => {
   const errors = [], external = [];
   page.on('pageerror', e => errors.push(e.message));
   page.on('request', r => { if (/^https?:/.test(r.url()) && !r.url().startsWith('http://127.0.0.1:4173/')) external.push(r.url()); });
   await page.goto('/?game=red-vi');
-  await expect(page.locator('#offline-status')).toContainText('4 ROM', { timeout: 40_000 });
+  await expect(page.locator('#offline-status')).toContainText('5 ROM', { timeout: 40_000 });
   const manifest = await page.evaluate(async () => (await fetch('/manifest.webmanifest')).json());
   expect(manifest.display).toBe('standalone');
   expect(manifest.id).toBe('/');
@@ -61,7 +63,8 @@ test('all four ROMs and the engine boot offline; device saves survive reopening'
   await page.locator('#quick-load').click();
   await expect(page.locator('#status')).toContainText('Đã tải bản lưu nhanh');
   expect(workRAM(await frame.evaluate(() => Array.from(window.EJS_emulator.gameManager.getState())))).toEqual(workRAM(state));
-  for (const [language, base] of [['vi', 'blue'], ['en', 'blue'], ['en', 'red']]) {
+  // Anime Version is Vietnamese-only: picking it from English falls back to its edition.
+  for (const [language, base] of [['vi', 'blue'], ['en', 'blue'], ['en', 'red'], ['en', 'anime']]) {
     if (await page.locator('#language').inputValue() !== language) await page.locator('#language').selectOption(language);
     await expect(page.locator('#quick-save')).toBeEnabled({ timeout: 40_000 });
     await page.locator(`button[data-game="${base}"]`).click();
@@ -129,7 +132,7 @@ test('a service worker update waits for the user, saves, then reloads', async ({
   const worker = new URL('../../dist/sw.js', import.meta.url);
   const original = await readFile(worker, 'utf8');
   await page.goto('/?game=red-vi');
-  await expect(page.locator('#offline-status')).toContainText('4 ROM', { timeout: 40_000 });
+  await expect(page.locator('#offline-status')).toContainText('5 ROM', { timeout: 40_000 });
   await boot(page);
   const previousSave = await readAuto(page);
   try {

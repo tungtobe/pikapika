@@ -1,4 +1,5 @@
 import { registerSW } from 'virtual:pwa-register';
+import { games } from './games.js';
 
 export function setupPWA({ saveBeforeUpdate, report }) {
   const $ = id => document.getElementById(id);
@@ -11,7 +12,7 @@ export function setupPWA({ saveBeforeUpdate, report }) {
   navigator.serviceWorker?.addEventListener('controllerchange', reloadAfterSave);
   const connection = () => {
     $('offline-status').textContent = offlineReady
-      ? (navigator.onLine ? '✓ Cả 4 ROM đã sẵn sàng chơi offline' : '✓ Đang offline · Có thể tiếp tục chơi')
+      ? (navigator.onLine ? `✓ Cả ${Object.keys(games).length} ROM đã sẵn sàng chơi offline` : '✓ Đang offline · Có thể tiếp tục chơi')
       : (navigator.onLine ? 'Đang tải dữ liệu để chơi offline…' : 'Chưa tải xong dữ liệu offline. Hãy kết nối mạng.');
   };
   const updateSW = registerSW({

@@ -1,15 +1,15 @@
 import './style.css';
-import { games, getGame } from './games.js';
+import { games, getGame, variant, romName } from './games.js';
 import { readSaves } from './storage.js';
 import { setupPWA } from './pwa.js';
 import { setupTouch } from './touch.js';
 const $ = id => document.getElementById(id);
 let previousGame;
 try { previousGame = localStorage.getItem('pokered-player:last-game'); } catch { /* Storage may be restricted. */ }
-// Home opens the Vietnamese edition of the last Red/Blue choice. Explicit
+// Home opens the Vietnamese edition of the last game choice. Explicit
 // ROM links and the language selector still allow the English editions.
 const requestedGame = new URLSearchParams(location.search).get('game');
-let game = getGame(requestedGame || `${getGame(previousGame).base}-vi`);
+let game = getGame(requestedGame || variant(getGame(previousGame).base, 'vi').id);
 let ready = false;
 let paused = false;
 let busy = false;
@@ -37,7 +37,9 @@ async function updateTimes() {
     $(`${slot}-time`).textContent = saves[slot]
       ? new Date(saves[slot].updatedAt).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' }) : 'Chưa có';
   }
-  $('migration-note').textContent = migrationWarning || (saves.migration
+  $('migration-note').textContent = migrationWarning || (saves.migration?.source === 'sav'
+    ? 'Đã nhập file .sav. Sau khi khởi động lại game, chọn TIẾP TỤC để chơi từ mốc SAVE trong file.'
+    : saves.migration
     ? 'Đã chuyển SAVE từ ROM cũ. Sau khi khởi động lại game, chọn TIẾP TỤC / CONTINUE để chơi từ mốc SAVE trong game.'
     : 'Trước khi cập nhật ROM, hãy dùng START → SAVE trong game. Web tự chuyển mốc SAVE sang bản ROM tương thích mới; lưu nhanh vẫn thuộc ROM cũ.');
 }
@@ -45,14 +47,19 @@ function setControls() {
   document.querySelectorAll('[data-runtime]').forEach(button => button.disabled = !ready || busy);
   document.querySelectorAll('button[data-game]').forEach(button => button.disabled = busy);
   $('language').disabled = busy;
+  // Anime Version only exists in Vietnamese.
+  $('language').querySelector('[value=en]').disabled = variant(game.base, 'en').language !== 'en';
 }
 function selectGame(id) {
   game = getGame(id);
   migrationWarning = '';
   try { localStorage.setItem('pokered-player:last-game', game.id); } catch { /* IndexedDB saves report their own errors. */ }
   document.documentElement.dataset.game = game.base;
+  document.documentElement.dataset.system = game.system;
   $('language').value = game.language;
-  $('version-label').textContent = game.language === 'vi' ? 'GAME BOY · VI' : 'GAME BOY';
+  $('version-label').textContent = [game.system === 'gba' ? 'GAME BOY ADVANCE' : 'GAME BOY',
+    game.language === 'vi' && 'VI', game.version].filter(Boolean).join(' · ');
+  setControls();
   $('game-title').textContent = game.name;
   document.title = `${game.name} · Pokémon Pocket`;
   document.querySelectorAll('button[data-game]').forEach(button => {
@@ -103,10 +110,9 @@ async function switchGame(id) {
   finally { busy = false; setControls(); $('language').value = game.language; }
 }
 document.querySelectorAll('button[data-game]').forEach(button => button.addEventListener('click', () => {
-  const id = button.dataset.game + (game.language === 'vi' ? '-vi' : '');
-  switchGame(id);
+  switchGame(variant(button.dataset.game, game.language).id);
 }));
-$('language').addEventListener('change', () => switchGame(game.base + ($('language').value === 'vi' ? '-vi' : '')));
+$('language').addEventListener('change', () => switchGame(variant(game.base, $('language').value).id));
 $('language-vi').disabled = !games['red-vi'];
 $('quick-save').addEventListener('click', () => action(() => runtime().save('quick'), 'Đã lưu nhanh. F8 để quay lại mốc này.'));
 $('quick-load').addEventListener('click', () => action(() => runtime().loadQuick()));
@@ -150,16 +156,32 @@ $('export').addEventListener('click', () => action(async () => {
   const url = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
   const link = document.createElement('a');
   link.href = url;
-  link.download = `${game.file.replace('.gbc', '')}-${new Date().toISOString().replace(/[:.]/g, '-')}.save.json`;
+  link.download = `${romName(game)}-${new Date().toISOString().replace(/[:.]/g, '-')}.save.json`;
   link.click();
   setTimeout(() => URL.revokeObjectURL(url), 10_000);
 }, 'Đã xuất bản sao lưu gồm save state và battery save.'));
+$('export-sav').addEventListener('click', () => action(async () => {
+  const url = URL.createObjectURL(new Blob([await runtime().exportBattery()], { type: 'application/octet-stream' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${romName(game)}.sav`;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 10_000);
+}, 'Đã xuất file .sav (mốc SAVE trong game). Dùng được với mGBA, My Boy!, Delta.'));
 $('import').addEventListener('click', () => $('import-file').click());
 $('import-file').addEventListener('change', () => {
   const file = $('import-file').files[0];
   if (!file) return;
   action(async () => {
     if (file.size > 20_000_000) throw new Error('File save quá lớn.');
+    if (/\.(sav|srm)$/i.test(file.name)) {
+      if (game.system !== 'gba') throw new Error('Chỉ Anime Version nhận file .sav. Red / Blue dùng file .save.json.');
+      await runtime().importBattery(new Uint8Array(await file.arrayBuffer()));
+      migrationWarning = '';
+      await updateTimes();
+      status('Đã nhập file .sav. Chọn TIẾP TỤC trong game để chơi từ mốc SAVE.');
+      return;
+    }
     const result = await runtime().importBackup(await file.text());
     migrationWarning = '';
     await updateTimes();

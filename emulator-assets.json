@@ -1,6 +1,9 @@
 {
   "version": "4.2.3",
-  "core": "gambatte",
+  "cores": [
+    "gambatte",
+    "mgba"
+  ],
   "assets": [
     {
       "path": "loader.js",
@@ -67,6 +70,24 @@
       "url": "https://cdn.emulatorjs.org/4.2.3/data/cores/reports/gambatte.json",
       "bytes": 122,
       "sha256": "a240a47bd6b2a38a6c46ee63c80bdcd24befbd50474453df4898d49282bd5f57"
+    },
+    {
+      "path": "cores/mgba-legacy-wasm.data",
+      "url": "https://cdn.emulatorjs.org/4.2.3/data/cores/mgba-legacy-wasm.data",
+      "bytes": 1054993,
+      "sha256": "e300d2f368c82bf61d77c972c36e367cf16408ec3d50beede080337519a3d696"
+    },
+    {
+      "path": "cores/mgba-wasm.data",
+      "url": "https://cdn.emulatorjs.org/4.2.3/data/cores/mgba-wasm.data",
+      "bytes": 1055616,
+      "sha256": "01fcaf6d4296ef1db6676e0c69400c4474e24572d0b2b99cc097e4ae885e02d7"
+    },
+    {
+      "path": "cores/reports/mgba.json",
+      "url": "https://cdn.emulatorjs.org/4.2.3/data/cores/reports/mgba.json",
+      "bytes": 118,
+      "sha256": "08219f6c855a9d996f04ed21169bb0c5ac64d469a8a536468b9876205b5c268d"
     },
     {
       "path": "LICENSE",

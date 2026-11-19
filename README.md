@@ -1,6 +1,6 @@
 # Pokémon Pocket
 
-Vite + EmulatorJS 4.2.3 / Gambatte để chơi Red và Blue, cả tiếng Anh và tiếng Việt. Chạy trên localhost hoặc deploy dạng website tĩnh HTTPS, cài lên màn hình chính và chơi offline. Không cần backend, tài khoản hay cơ sở dữ liệu trên server.
+Vite + EmulatorJS 4.2.3 (Gambatte + mGBA) để chơi Red và Blue, cả tiếng Anh và tiếng Việt, cùng **Pokémon Anime Version** (GBA, Việt hoá). Chạy trên localhost hoặc deploy dạng website tĩnh HTTPS, cài lên màn hình chính và chơi offline. Không cần backend, tài khoản hay cơ sở dữ liệu trên server.
 
 ## Chạy trên máy
 
@@ -15,6 +15,19 @@ Mở **http://localhost:5173**. Node.js >= 22.12. `setup:emulator` tải runtime
 
 ROM Việt được build bằng `make vietnamese` trong repo `pokered`. Đồng bộ lại sau mỗi lần build để cập nhật cả ROM và checksum. Trang chủ mặc định mở bản tiếng Việt của Red / Blue vừa chọn. Bạn vẫn có thể chọn English hoặc mở URL ROM tiếng Anh trực tiếp. Mỗi ROM / ngôn ngữ có save riêng. `?game=red-vi` và `?game=blue-vi` mở bản Việt trực tiếp.
 
+### Pokémon Anime Version (GBA)
+
+Bản hack FireRed theo anime season 1 của TekCafe (v2.0.7, Kanto + quần đảo Orange tập 1–103), chỉ có tiếng Việt, chạy core **mGBA**. `?game=anime` mở trực tiếp. ROM gốc FireRed (USA) 1.0 được build bit-khớp từ disassembly [pret/pokefirered](https://github.com/pret/pokefirered) (cần `arm-none-eabi-gcc` + `agbcc`), sau đó áp patch BPS:
+
+```sh
+# ../firered-build/pokefirered: git clone pret/pokefirered + pret/agbcc, agbcc ./build.sh && ./install.sh ../pokefirered, make firered
+npm run patch:anime -- ../firered-build/pokefirered/pokefirered.gba "/đường/dẫn/Pokemon Anime Version v2.0.7 (FireRed).bps"
+```
+
+Script kiểm tra CRC32 ROM nguồn (`DD88761C`), patch và ROM đích, rồi so SHA-1 với giá trị ghim trong `src/games.js` và ghi `public/roms/pokeanime_vi.gba` (32 MiB). Khi có bản patch mới: ghim SHA-1 mới vào `games.anime.sha1` / `version`. Save của bản cũ được tự chuyển (mốc SAVE trong game) nếu `saveSchema` giữ nguyên.
+
+Phím L / R: **A** / **S** trên bàn phím, nút vai trên gamepad, nút L / R trên màn hình cảm ứng. Phần save có thêm **nhập / xuất file `.sav`** (flash 128 KiB) để dùng chung với mGBA, My Boy!, Delta hoặc save mẫu tác giả gửi kèm patch.
+
 ## Deploy Vercel
 
 Chuẩn bị gói độc lập trên máy này:
@@ -23,7 +36,7 @@ Chuẩn bị gói độc lập trên máy này:
 npm run package:deploy
 ```
 
-Lệnh kiểm tra SHA-1 cả 4 ROM, SHA-256 runtime, build PWA và tạo:
+Lệnh kiểm tra SHA-1 cả 5 ROM, SHA-256 runtime, build PWA và tạo:
 
 - **`artifacts/vercel/`**: source Vite tự đủ, chứa ROM + runtime + lockfile + `vercel.json`. Không cần repo `pokered` bên cạnh khi build trên cloud.
 - **`dist/`**: website tĩnh đã build, sẵn cho host khác.
@@ -49,7 +62,7 @@ Chọn URL production ổn định để chơi. Mỗi URL preview Vercel là m�
 
 Sau `npm run package:deploy`, upload **nội dung `dist/`** bằng Netlify Drop hoặc Cloudflare Pages Direct Upload. Không cần chạy server Node. File `_headers` đã cấu hình không cache lâu service worker / manifest. Host cần HTTPS, phục vụ nguyên file `.gbc`, `.data`, `.wasm` và cả `emulator.html`; không bật fallback mọi URL sang `index.html`.
 
-Lần đầu phải mở có mạng và đợi dòng **“Cả 4 ROM đã sẵn sàng chơi offline”**. Khoảng 7,1 MiB nội dung được precache, bao gồm cả 4 ROM và core. Sau đó có thể bật chế độ máy bay, đóng/mở lại ứng dụng và chơi. Offline được bật ở bản production, không bật trong Vite dev.
+Lần đầu phải mở có mạng và đợi dòng **“Cả 5 ROM đã sẵn sàng chơi offline”**. Khoảng 42 MiB nội dung được precache (ROM GBA chiếm 32 MiB), bao gồm cả 5 ROM và 2 core; lần đầu cần mạng ổn định. Sau đó có thể bật chế độ máy bay, đóng/mở lại ứng dụng và chơi. Offline được bật ở bản production, không bật trong Vite dev.
 
 ## Cài và chơi trên iPhone
 
@@ -128,11 +141,11 @@ npm run test:pwa
 npm run build
 ```
 
-`npm test`: Chrome, boot cả 4 ROM, menu / hội thoại Việt thực, keyboard, gamepad giả lập, save / load / backup checksum, reload và tách save theo ROM.
+`npm test`: Chrome, boot cả 5 ROM (Anime Version: mGBA, L/R, nhập / xuất `.sav` với save mẫu tập 83), menu / hội thoại Việt thực, keyboard, gamepad giả lập, save / load / backup checksum, reload và tách save theo ROM.
 
 `npm test -- tests/migration.spec.js`: dùng SAVE mẫu tạo từ menu gốc của Pokémon, mô phỏng hai bản ROM có SHA-1 khác nhau và xác minh ROM thực trong core, chọn CONTINUE để đọc lại tên nhân vật / bản đồ, giữ nguyên checkpoint cũ, nhập file cũ, từ chối sai game / ngôn ngữ / schema / checksum, khôi phục khi chuyển lỗi và tách file SRAM gốc giữa các bản build.
 
-`npm run test:pwa`: chạy bản production trên `127.0.0.1:4173`, cả Chrome và WebKit giả lập iPhone 13; kiểm tra manifest, precache, khởi động 4 ROM sau khi ngắt mạng, mở lại save, dữ liệu riêng theo context, touch nhiều ngón / hủy chạm, tự lưu khi chuyển nền, âm thanh, bố cục ngang/dọc và cập nhật service worker chỉ tải lại sau khi đã lưu. Context kiểm thử tách khỏi profile chơi game của bạn. WebKit giả lập không thay thế kiểm thử trên iPhone / tay cầm vật lý.
+`npm run test:pwa`: chạy bản production trên `127.0.0.1:4173`, cả Chrome và WebKit giả lập iPhone 13; kiểm tra manifest, precache, khởi động 5 ROM sau khi ngắt mạng, mở lại save, dữ liệu riêng theo context, touch nhiều ngón / hủy chạm, tự lưu khi chuyển nền, âm thanh, bố cục ngang/dọc và cập nhật service worker chỉ tải lại sau khi đã lưu. Context kiểm thử tách khỏi profile chơi game của bạn. WebKit giả lập không thay thế kiểm thử trên iPhone / tay cầm vật lý.
 
 Preview tại `http://localhost:5173` bằng `npm run preview` sau khi dừng dev server. Cổng cố định để không vô tình tạo kho save ở địa chỉ khác. Server kiểm thử production 4173 dùng kho riêng.
 
@@ -145,4 +158,4 @@ Preview tại `http://localhost:5173` bằng `npm run preview` sau khi dừng de
 - [EmulatorJS 4.2.3](https://github.com/EmulatorJS/EmulatorJS/releases/tag/v4.2.3)
 - [GameManager và save](https://github.com/EmulatorJS/EmulatorJS/blob/v4.2.3/data/src/GameManager.js)
 
-EmulatorJS GPL-3.0, license đi kèm tại `public/emulatorjs/LICENSE`; runtime giữ nguyên file đã ghim trong `emulator-assets.json`. Core Gambatte có thông tin license trong gói core. Các quyền ROM thuộc chủ sở hữu tương ứng. Thay đổi PWA không sửa ROM hoặc gameplay.
+EmulatorJS GPL-3.0, license đi kèm tại `public/emulatorjs/LICENSE`; runtime giữ nguyên file đã ghim trong `emulator-assets.json`. Core Gambatte và mGBA có thông tin license trong gói core. Các quyền ROM thuộc chủ sở hữu tương ứng. Thay đổi PWA không sửa ROM hoặc gameplay.
